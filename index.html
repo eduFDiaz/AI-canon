@@ -46,22 +46,23 @@
             ctx.save();
 
             //Bullet is initialized in the bottom left corner
-            let bullet = new Bullet(0, 0, 45, 19, 'rgb(200, 0, 0)', ctx);
+            let bullet = new Bullet(0, 0, 45, 101.5, 'rgb(200, 0, 0, .5)', ctx);
 
             //Bullet is initialized in the bottom right corner
-            let target = new Bullet(canvas.clientWidth - 10, 0, 0, 0, 'rgb(0, 0, 200)', ctx);
+            let target = new Bullet(canvas.clientWidth - 10, 0, 0, 0, 'rgb(0, 0, 200, .1)', ctx);
 
             // t is time in seconds
             var distance = -99999;
             t = 0;
             while(bullet.y >= 0) {
+                    // 1 meter = 3779.527559055 pixels
                     distance = Math.sqrt(bullet.x - target.x);
-                    bullet.x = bullet.x + (bullet.v0 * Math.cos(bullet.α * Math.PI / 180)) * t;
-                    bullet.y = bullet.y + (bullet.v0 * Math.sin(bullet.α * Math.PI / 180)) * t - 0.5 * g * Math.pow(t, 2);
-                    bullet.draw();
+                    bullet.x = bullet.x / 3779.527559055 + (bullet.v0 * Math.cos(bullet.α * Math.PI / 180)) * t;
+                    bullet.y = bullet.y / 3779.527559055 + (bullet.v0 * Math.sin(bullet.α * Math.PI / 180)) * t - 0.5 * g * Math.pow(t, 2);
                     target.draw();
+                    bullet.draw();
                     console.log('x', bullet.x, '\ny', bullet.y,'\nt',t);
-                    t = t + 0.1;
+                    t = t + .1; // Inegrate for a dt = 0.1 s
                 }
             var distanceElement = document.getElementById('distance');
             distanceElement.innerHTML = distanceElement.innerHTML + distance;
