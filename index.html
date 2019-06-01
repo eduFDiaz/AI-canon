@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Canvas tutorial</title>
+    <script type="text/javascript">
+
+        //Class to define de bullet object
+        function Bullet(x, y, α, v0, color, ctx) {
+            this.x = x, //initial x 
+                this.y = y, //initial y
+                this.α = α,   //firing angle or launch angle
+                this.v0 = v0, //initial velocity [m/s^2]
+                this.color = color, //color of the object
+                this.ctx = ctx,
+                this.draw = function () {
+                    this.ctx.fillStyle = this.color;
+                    this.ctx.fillRect(this.x, this.y, 10, 10);
+                }
+        }
+
+        function Target(x, y, α, v0, color, ctx, subject) {
+            Bullet.call(x, y, α, v0, color, ctx);
+            this.subject = subject;
+        }
+
+        function loop() {
+
+        }
+
+        //This is like the main function
+        function draw() {
+            //lets declare some constants
+            var g = 9.8; // gravity constant 9.8 [m/s^2]
+            var canvas = document.getElementById('canvas');
+
+            var ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth - 300;
+            canvas.height = window.innerHeight - 200;
+            FPS = 30;
+
+            // Transform the coordinate system to canonical coordinates
+            ctx.translate(0, canvas.clientHeight);
+            ctx.scale(1, -1);
+            ctx.save();
+
+            //Bullet is initialized in the bottom left corner
+            let bullet = new Bullet(0, 0, 45, 19, 'rgb(200, 0, 0)', ctx);
+
+            //Bullet is initialized in the bottom right corner
+            let target = new Bullet(canvas.clientWidth - 10, 0, 0, 0, 'rgb(0, 0, 200)', ctx);
+
+            // t is time in seconds
+            var distance = -99999;
+            t = 0;
+            while(bullet.y >= 0) {
+                    distance = Math.sqrt(bullet.x - target.x);
+                    bullet.x = bullet.x + (bullet.v0 * Math.cos(bullet.α * Math.PI / 180)) * t;
+                    bullet.y = bullet.y + (bullet.v0 * Math.sin(bullet.α * Math.PI / 180)) * t - 0.5 * g * Math.pow(t, 2);
+                    bullet.draw();
+                    target.draw();
+                    console.log('x', bullet.x, '\ny', bullet.y,'\nt',t);
+                    t = t + 0.1;
+                }
+            var distanceElement = document.getElementById('distance');
+            distanceElement.innerHTML = distanceElement.innerHTML + distance;
+
+            console.log('distance', Math.sqrt(bullet.x - target.x));
+        }
+    </script>
+    <style type="text/css">
+        canvas {
+            border: 4px solid black;
+        }
+    </style>
+</head>
+
+<body onload="draw();">
+    <canvas id="canvas"></canvas>
+    <h1 style="color: red;">Projectile</h1>
+    <h1 style="color: blue;">Target</h1>
+    <h1 id="distance" style="color: green;">distance: </h1>
+
+</body>
+
+</html>
